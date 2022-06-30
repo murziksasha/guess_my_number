@@ -1,5 +1,6 @@
 'use strict';
 
+
 document.addEventListener('DOMContentLoaded', ()=>{
   const reset = document.querySelector('.btn.again'),
         secretNumber = document.querySelector('.number'),
@@ -8,10 +9,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
         inputGuess = document.querySelector('input.guess'),
         btnCheck = document.querySelector('.btn.check');
   let score = document.querySelector('span.score'),
-      numberScore = 20;
-  const numberSecretScore = Math.trunc((Math.random()*20)+1);
+      numberScore = 20,
+      checkNumber = 0,
+      numberSuper = Math.trunc((Math.random()*20)+1);
+      score.textContent = numberScore;
 
-      secretNumber.textContent = numberSecretScore;
+    
+
  
 
   const scoreMinus= ()=> {
@@ -24,44 +28,59 @@ document.addEventListener('DOMContentLoaded', ()=>{
       message.textContent = 'You are Lose';
     }
     inputGuess.value='';
+    checkNumber = 0;
+  }
 
+  const setMessage = (textMessage)=>{
+    message.textContent = textMessage;
   }
 
   const checkValue = () => {
     btnCheck.addEventListener('click', ()=>{
-
-      const inputValue = numberSecretScore;
-      if(inputValue == inputGuess.value){
+      checkNumber = inputGuess.value;
+      if(checkNumber == numberSuper){
         document.querySelector('body').style.backgroundColor = 'green';
-        message.textContent = 'You are WON';
+        setMessage('You are WON');
         btnCheck.disabled = true;
-      }else{
-        message.textContent = 'Start guessing...';
-
-      }
-      scoreMinus();
-      
-
+        if(numberScore > highScore.textContent){
+          highScore.textContent = numberScore-1;
+        }
+          scoreMinus();
+          secretNumber.textContent = numberSuper;
+          numberScore = 20;
+          
+      }else if (!inputGuess.value || inputGuess.value <= 0 || inputGuess.value > 20){
+      setMessage('Not valid Number. Try again !');
+      inputGuess.value='';
+       return;
+      } else if( inputGuess.value > numberSuper){
+        setMessage('It\'s too high!');
+        scoreMinus();
+      } else if( inputGuess.value < numberSuper){
+        setMessage('It\'s too low!');
+        scoreMinus();
+      } 
 
     });
   }
 
   const resetGame = ()=>{
     reset.addEventListener('click',()=>{
-      numberScore = 20;
-      score.textContent = numberScore;
-      secretNumber.textContent =  Math.trunc((Math.random()*20)+1);
       message.textContent = 'Start guessing...';
       document.querySelector('body').style.backgroundColor = '#222';
       btnCheck.disabled = false;
+      inputGuess.value='';
+      secretNumber.textContent = '?';
+      score.textContent = numberScore;
+
+      return  numberSuper = Math.trunc((Math.random()*20)+1);
+
 
     });
   };
 
+
   checkValue();
   resetGame();
-  
-
-
 
 });
